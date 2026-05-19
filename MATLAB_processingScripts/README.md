@@ -2,11 +2,11 @@
 
 MATLAB functions and scripts for processing Z-spectroscopy data and fitting semisolid MT models to quantify spin parameters from data acquired with the sequences in `TNMR_sequenceFiles/`.
 
-| Script | Input sequence | Description |
-|---|---|---|
-| `ZspecProc.m` | `ZSpecMultB1vals` | Loads Z-spectroscopy data, computes Z-spectra normalized to the far-offset reference, and displays MTR asymmetry curves as a function of offset frequency and B₁ amplitude. |
-| `MTfit_multi_prepInputs.m` | `ZSpecMultB1vals`, `2freqZSpecMultB1vals_*` | Script (run section by section) that prepares the `dataset_list` and `param_defs` input variables for `MTfit_multi()` from workspace data. Supports 1-sided Z-spec, 2-sided (alternating frequency) Z-spec, and selective inversion-recovery datasets. |
-| `MTfit_multi.m` | — | Performs simultaneous nonlinear least-squares fitting of one or more Z-spectroscopy and/or inversion-recovery datasets to a semisolid MT model. Supports Lorentzian, Gaussian, super-Lorentzian, and Kubo-Tomita semisolid lineshapes. |
+| Script | Description |
+|---|---|
+| `ZspecProc.m` | Takes an array of spectral integrals computed by the NMR_UI program, reshapes the array according to the offset and B₁ amplitude dimensions, and calculates the Z-spectrum for each B₁ value. |
+| `MTfit_multi_prepInputs.m` | Helper script (run section by section) that assembles datasets to be fitted into input structures, pairing each dataset with the appropriate quantitative MT model function and fitting parameters, for use with `MTfit_multi.m`. |
+| `MTfit_multi.m` | Takes the inputs prepared by `MTfit_multi_prepInputs.m` and performs simultaneous nonlinear least-squares fitting across all included datasets. Returns the fitted spin parameters, confidence intervals, and plots of the data alongside the fitted models. Supports Lorentzian, Gaussian, super-Lorentzian, and Kubo-Tomita semisolid lineshapes. |
 
 ## `fittingModels/`
 MT model functions and semisolid lineshape functions called by `MTfit_multi.m`. See the [README](fittingModels/README.md) in that subfolder for details.
