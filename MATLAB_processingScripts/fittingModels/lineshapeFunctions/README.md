@@ -1,6 +1,6 @@
 # lineshapeFunctions
 
-Semisolid pool lineshape functions used by the MT model functions in the parent folder. Each function returns the RF saturation rate *R*<sub>RF,b</sub> for the semisolid pool given the pool's T₂ and the applied RF field.
+Semisolid pool lineshape functions used by the MT model functions in the parent folder. Each function returns the RF saturation rate *R*<sub>rfb</sub> for the semisolid pool given the pool's linewidth parameter and the applied RF field.
 
 | Script | Lineshape | Description |
 |---|---|---|
