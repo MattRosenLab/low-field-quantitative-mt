@@ -81,7 +81,7 @@ if sum(selIRidx)>0
     Tp=iv{selIRidx};
     w1p=1/2/Tp*2*pi;
 
-    t2b=t2b*1e-6;   %If t2b is too small (i.e. on order of 1e-5), fitting Jacobian may be singular!
+%     t2b=t2b*1e-6;   %If t2b is too small (i.e. on order of 1e-5), fitting Jacobian may be singular!
 
     switch lsfcn %NOTE: there are probably better expressions for 
         % superlorentzian and kubo-tomita

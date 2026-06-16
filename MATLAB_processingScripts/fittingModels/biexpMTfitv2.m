@@ -25,7 +25,7 @@ function out=biexpMTfitv2(R1a,R1b,Mb0,R,Ma_start,T2b,Tpulse,t,lineshape)
 %       Mb_start = exp(-w1_pulse^2 * t_pulse * T2b)
 %
 
-T2b=T2b*1e-6;   %If t2b is too small (i.e. on order of 1e-5), fitting Jacobian may be singular!
+% T2b=T2b*1e-6;   %If t2b is too small (i.e. on order of 1e-5), fitting Jacobian may be singular!
 
 % Set forward and backward exchange rates
 kab=Mb0*R;
