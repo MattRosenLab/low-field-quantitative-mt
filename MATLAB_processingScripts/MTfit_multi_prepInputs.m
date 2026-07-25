@@ -23,19 +23,23 @@ dataset1 = struct;  %overwrite previous struct variable in workspace
 %~~~~~~~~~~~~~~~~~~~~~~~~VALUES TO CHANGE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % dataset1.indep_vars = {mtf_presat_cw.satfrq(:,1), mtf_presat_cw.w1(1,:)};      
 % dataset1.data = mtf_presat_cw.specn_sig; 
-% dataset1.indep_vars = {[offs_Hz;offs_Hz], w1};      
-% dataset1.data(1:52,1:5) = ZSpecMTF30pc_1;
-% dataset1.data(53:104,1:5) = ZSpecMTF30pc_2;
-dataset1.indep_vars = {offs_Hz, w1};      
-dataset1.data = Z_newTRES;
+dataset1.indep_vars = {[offs_Hz;offs_Hz], w1_allbutMTF10pc};      
+dataset1.data(1:52,1:5) = ZSpecMTF30pc_1;
+dataset1.data(53:104,1:5) = ZSpecMTF30pc_2;
+% dataset1.indep_vars = {offsets_Hz, w1_upto1500Hz_MTF10pc};      
+% dataset1.data = Z_MTF10;
+% dataset1.indep_vars = {offs_Hz, w1adj_30pct};      
+% dataset1.data = Z_30pct;
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 dataset1.name = '1-sided Z-spec';
 dataset1.model_fun = @(p, delta, w1, lsfcn) ...
         mt_model_w_dipolar( ...
         p.t2a, p.ra, p.rb, p.mb0, p.r, p.t2b, p.sigtau, p.delta_MT, p.td, ...
         delta, w1, lsfcn);
-dataset1.plot_fun = @(iv, data, fit) ...
-    plot_zspec(iv{1}, iv{2}, data, fit);
+dataset1.plot_fun = @(iv, data, fit, logflg) ...
+    plot_zspec(iv{1}, iv{2}, data, fit, logflg);
+% dataset1.xaxislogscale = false;
+dataset1.xaxislogscale = true;
 
 % We need to make sure the .indep_vars are specified as m x 1 and 1 x n,
 % respectively
@@ -62,8 +66,10 @@ dataset2.name = '2-sided Z-spec, Alternating Frequencies';
 dataset2.model_fun = @(p, delta, w1, lsfcn) ...
     mt_model(p.t2a, p.ra, p.rb, p.mb0, p.r, p.t2b, p.sigtau, ...
                    p.delta_MT, delta, w1, lsfcn);
-dataset2.plot_fun = @(iv, data, fit) ...
-    plot_zspec(iv{1}, iv{2}, data, fit);
+dataset2.plot_fun = @(iv, data, fit, logflg) ...
+    plot_zspec(iv{1}, iv{2}, data, fit, logflg);
+% dataset2.xaxislogscale = false;
+dataset2.xaxislogscale = true;
 
 % We need to make sure the .indep_vars are specified as m x 1 and 1 x n,
 % respectively
@@ -81,9 +87,10 @@ disp('***REMEMBER TO RE-COMBINE DATASETS INTO VARIABLE dataset_list!!***')
 %% (3) PREP 2-SIDED Z-SPECTROSCOPY DATA: SIMULTANEOUS FREQUENCIES
 dataset3 = struct;  %overwrite previous struct variable in workspace
 %~~~~~~~~~~~~~~~~~~~~~~~~VALUES TO CHANGE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
-% dataset3.indep_vars = {offs_2freq_Hz, w1adj_2freq_10pct};
-dataset3.indep_vars = {offs_Hz_2freq, w1_2freq_adj, 0};
-dataset3.data = Z_2freq_newTRES;
+dataset3.indep_vars = {offs_Hz_2freq, w1_adj_2freq, 0};
+dataset3.data = Z_2freq_MTF30;
+% dataset3.indep_vars = {offs_2freq_Hz, w1adj_2freq_30pct, globOff_2freq};
+% dataset3.data = Z_2freq_30pct;
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 dataset3.name = '2-sided Z-spec, Simultaneous Frequencies';
 % dataset3.model_fun = @(p, delta, w1) ...
@@ -92,8 +99,10 @@ dataset3.name = '2-sided Z-spec, Simultaneous Frequencies';
 dataset3.model_fun = @(p, delta, w1, Txoff, lsfcn) ...
     mt_model_2freq_offFromWater(p.t2a, p.ra, p.rb, p.mb0, p.r, p.t2b, p.sigtau, ...
                    p.delta_MT, delta, w1, Txoff, lsfcn);
-dataset3.plot_fun = @(iv, data, fit) ...
-    plot_zspec(iv{1}, iv{2}, data, fit);
+dataset3.plot_fun = @(iv, data, fit, logflg) ...
+    plot_zspec(iv{1}, iv{2}, data, fit, logflg);
+% dataset3.xaxislogscale = false;
+dataset3.xaxislogscale = true;
 
 % We need to make sure the .indep_vars are specified as m x 1 and 1 x n,
 % respectively
@@ -113,8 +122,10 @@ dataset4 = struct;  %overwrite previous struct variable in workspace
 %~~~~~~~~~~~~~~~~~~~~~~~~VALUES TO CHANGE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 % dataset4.indep_vars = {mtf_t1.tau, mtf_t1.pars.p1*1e-6};
 % dataset4.data = mtf_t1.norm_sig;
-dataset4.indep_vars = {TI_newTRES, Tpuls_newTRES};
-dataset4.data = SelIR_newTRES;
+dataset4.indep_vars = {TI_MTF10to40, TinvPuls_MTF};
+dataset4.data = S_MTF30;
+% dataset4.indep_vars = {TI_30pct, Tpuls_30pct};
+% dataset4.data = SelIR_30pct;
 % % If you want to weight the residuals towards earlier TI values, uncomment
 % % below + change adjfac as desired
 % % Weighting based on 1/TI 
@@ -129,22 +140,46 @@ dataset4.data = SelIR_newTRES;
 dataset4.name = 'Selective IR';
 dataset4.model_fun = @(p, t1, Tp, lsfcn) ...
     biexpMTfitv2(p.ra, p.rb, p.mb0, p.r, p.ma0, p.t2b, Tp, t1, lsfcn);
-dataset4.plot_fun = @(iv, data, fit) ...
-    plot_IR(iv{1}, data, fit);
+dataset4.plot_fun = @(iv, data, fit, logflg) ...
+    plot_IR(iv{1}, data, fit, logflg);
+% dataset4.xaxislogscale = false;
+dataset4.xaxislogscale = true;
 
 disp('Selective IR dataset successfully prepared.')
 disp('***REMEMBER TO RE-COMBINE DATASETS INTO VARIABLE dataset_list!!***')
 
 
-%% COMBINE ALL DATASETS TOGETHER + CHOOSE LINESHAPE
+%% COMBINE ALL DATASETS TOGETHER + SET PARAMETERS
 % Modify the line below if you want to change which datasets are
 % simultaneously fitted
 dataset_list={dataset1, dataset3, dataset4};
 disp('All datasets combined into cell array dataset_list.')
 
-lineshape='gaussian';
-% lineshape='kubo-tomita';
-disp(['Semisolid lineshape for modeling: ' lineshape]);
+% Set fitting parameters, including lineshape
+pars.lsfcn='gaussian';
+% lsfcn='kubo-tomita';
+disp(['Semisolid lineshape for modeling: ' pars.lsfcn]);
+
+% pars.ci_method='nlparci';
+
+pars.ci_method='montecarlo';
+pars.mc_n_iter = 5000;
+pars.mc_use_parallel = true;
+
+% pars.ci_method='profile';
+% pars.pl_n_grid = 100;
+% pars.pl_range_scale = 4;
+% pars.pl_alpha = 0.05;
+% pars.pl_show_profiles = false;
+
+disp(['Confidence interval estimation method: ' pars.ci_method]);
+if strcmp(pars.ci_method,'montecarlo')
+    disp(['Number of Monte Carlo iterations: ' num2str(pars.mc_n_iter)]);
+end
+if strcmp(pars.ci_method,'profile')
+    disp(['Grid size for profile likelihood: ' num2str(pars.pl_n_grid)]);
+end
+
 
 %% SETUP PARAMETER STARTING VALUES AND BOUNDS
 % .init     = starting point for fitting
@@ -161,18 +196,18 @@ param_defs = struct( ...
     'r',        struct('init',40,   'lb',0,    'ub',1000), ...
     'ma0',      struct('init',-0.95,'lb',-1,   'ub',-0.8), ...
     't2a',      struct('init',.05,  'lb',0,    'ub',2.5), ... 
-    't2b',      struct('init',10e-6,   'lb',0,    'ub',50e-6), ...
-    'sigtau',   struct('init',1,    'lb',1,     'ub',1), ...
+    't2b',      struct('init',10,   'lb',0,    'ub',50), ...        % NOTE: Fitting best if t2b is in units of MICROSECONDS!!
     'td',       struct('init',10e-3, 'lb',0,    'ub',.3), ...    
+    'sigtau',   struct('init',1,    'lb',1,     'ub',1), ...
     'delta_MT', struct('init',0,    'lb',0,    'ub',0));
-%     'sigtau',   struct('init',1,    'lb',0.01, 'ub',3), ...
 %     'delta_MT', struct('init',0,    'lb',-5000,    'ub',5000));    
+%     'sigtau',   struct('init',1,    'lb',0.01, 'ub',3), ...
 
 disp('Input struct variable param_defs successfully initialized.')
 
 
 %% plotting functions used to prepare dataset structs (DO NOT RUN THIS SECTION)
-function plot_zspec(delta, w1, data, fitpts)
+function plot_zspec(delta, w1, data, fitpts, logflg)
     % First, reorder delta and w1, along w/ data and fit
     [delta,sortdeltaidx]=sort(delta,'ascend');
     [w1,sortw1idx]=sort(w1,'ascend');
@@ -199,12 +234,20 @@ function plot_zspec(delta, w1, data, fitpts)
     xmax=max(delta_noM0)/1000;
     axis square;
     axis([xmin, xmax, 0, 1]);
+    % Plot on log scale if specified (positive offsets only)
+    if logflg
+        set(gca,'XScale','log');
+    end
 end
 
-function plot_IR(t, data, fitpts)
+function plot_IR(t, data, fitpts, logflg)
     plot(t, data, 'bo'); hold on; 
     plot(t, fitpts, 'r-', 'LineWidth',2);
     xlabel('Inversion time [s]'); ylabel('Signal'); 
     legend('Data','Fit'); 
     grid on; axis square;
+    % Plot on log scale if specified
+    if logflg
+        set(gca,'XScale','log');
+    end    
 end
