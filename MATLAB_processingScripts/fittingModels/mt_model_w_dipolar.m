@@ -23,6 +23,8 @@ if ~exist('lineshape','var')
     lineshape='gaussian';
 end
 
+t2b=t2b*1e-6;   %If t2b is too small (i.e. on order of 1e-5), fitting Jacobian may be singular!
+
 % Fixing values for white matter fitting
 % t2a=0.065;
 % ra=0.4;
